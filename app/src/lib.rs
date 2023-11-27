@@ -4,8 +4,9 @@ use leptos_router::*;
 
 pub mod error_template;
 pub mod todo;
+pub mod buttons;
 
-use todo::BusyButton;
+use buttons::{Counter};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -18,18 +19,13 @@ pub fn App() -> impl IntoView {
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         // <Stylesheet id="leptos" href="/pico.min.css"/>
         // <Stylesheet id="leptos" href="/pkg/start-axum-workspace.css"/>
-
+        <Stylesheet id="leptos" href="/pkg/serverfunc.css"/>
         // sets the document title
         <Title text="Welcome to Leptos"/>
 
         // content for this welcome page
         <Router>
-            <header class="container">
-                <hgroup>
-                    <h1>App</h1>
-                </hgroup>
-            </header>
-            <main class="container">
+            <main class="my-0 mx-auto max-w-3xl text-center">
                 <Routes>
                     <Route path="" view=HomePage/>
                 </Routes>
@@ -42,15 +38,28 @@ pub fn App() -> impl IntoView {
 #[component]
 fn HomePage() -> impl IntoView {
     // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(0);
-    let on_click = move |_| set_count.update(|count| *count += 1);
+    let (value, set_value) = create_signal(0);
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <div class="container">
-            <button role="button" class="outline" on:click=on_click>"Click Me: " {count}</button>
-            <a href="#" role="button" class="outline" on:click=on_click>"Click Me: " {count}</a>
-            <BusyButton />
+        <div class="bg-gradient-to-tl from-blue-800 to-blue-500 text-white font-mono flex flex-col min-h-screen">
+            <h1>serverfunc.</h1>
+            <div class="flex flex-wrap m-auto">
+                <button on:click=move |_| set_value.update(|value| *value -= 1) 
+                    class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
+                    "-"
+                </button>
+                <button class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-800 border-blue-900 text-white">
+                    {value}
+                </button>
+                <button on:click=move |_| set_value.update(|value| *value += 1) 
+                    class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
+                    "+"
+                </button>
+            </div>
+            <div class="flex flex-wrap m-auto">
+                // <CounterB />
+                <Counter />
+            </div>
         </div>
     }
 }
