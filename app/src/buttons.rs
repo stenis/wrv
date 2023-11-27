@@ -60,10 +60,10 @@ pub fn Counter() -> impl IntoView {
     // the resource's loading() method gives us a
     // signal to indicate whether it's currently loading
     let loading = async_data.loading();
-    let is_loading = move || if loading() { " (...)" } else { " (Idle)" };
+    let is_loading = move || if loading() { " (....)" } else { " (done)" };
 
     view! {
-        <button class="btn-primary"
+        <button class="btn-primary disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200"
             on:click=move |_| {
                 set_count.update(|n| *n += 1);
             }
@@ -83,18 +83,4 @@ pub fn Counter() -> impl IntoView {
             {is_loading}
         </p>
     }
-
-    //   div()
-    //     .child((
-    //         button()
-    //          .attr("disabled", loading )
-    //          .attr("class", "btn-primary")
-    //             // typed events found in leptos::ev
-    //             // 1) prevent typos in event names
-    //             // 2) allow for correct type inference in callbacks
-    //             .on(ev::click, move |_| set_count.update(|n| *n += 1))
-    //             .child("click"),
-    //         p()
-    //           .attr("class", "p-2 m-1").child(("Value: ", count)),
-    //     ))
 }
