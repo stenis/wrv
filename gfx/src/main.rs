@@ -1,6 +1,6 @@
-use gfx::run;
+use wasm_bindgen::prelude::*;
 
-#[cfg_attr(target_arch="wasm32", wasm_bindgen(start))]
+#[wasm_bindgen(start)]
 fn main() {
-    run();
+    pollster::block_on(gfx::run());
 }
