@@ -1,19 +1,11 @@
+use wasm_bindgen::prelude::*;
+
 use winit::{
     event::*,
     event_loop::EventLoop,
-    window::WindowBuilder, dpi::PhysicalSize,
+    window::{WindowBuilder, Window}, 
+    dpi::PhysicalSize,
 };
-
-use wasm_bindgen::prelude::*;
-
-// lib.rs
-use winit::window::Window;
-
-#[wasm_bindgen]
-pub fn greet(a: &str) -> String {  
-    web_sys::console::log_1(&"Hello using web-sys".into());
-    format!("Hello, {}!", a)
-}
 
 #[wasm_bindgen]
 pub async fn start() {
@@ -35,7 +27,8 @@ struct State {
 impl State {
     // Creating some of the wgpu types requires async code
      async fn new(window: Window) -> Self {
-        let size = PhysicalSize::new(384, 384);//window.inner_size();
+        //let size = window.inner_size(); //PhysicalSize::new(384, 384);//
+        let size = PhysicalSize::new(384, 384);
         
         // The instance is a handle to our GPU
         // Backends::all => Vulkan + Metal + DX12 + Browser WebGPU
@@ -43,16 +36,12 @@ impl State {
             backends: wgpu::Backends::all(),
             ..Default::default()
         });
-        
-        web_sys::console::log_1(&"test 1.".into());
-                
+                        
         // # Safety
         //
         // The surface needs to live as long as the window that created it.
         // State owns the window so this should be safe.
         let surface = unsafe { instance.create_surface(&window) }.unwrap();
-
-        web_sys::console::log_1(&"test 2.".into());
 
         let adapter = instance.request_adapter(
             &wgpu::RequestAdapterOptions {
@@ -121,8 +110,6 @@ impl State {
             self.surface.configure(&self.device, &self.config);
         }
     }
-
-
     fn input(&mut self, _event: &WindowEvent) -> bool {
         false
     }
@@ -182,6 +169,9 @@ pub async fn run() {
         .build(&event_loop)
         .unwrap();
 
+    let s = window.inner_size();
+    log::debug!("{}:{}", s.height, s.width);
+
     let mut state = State::new(window).await;
 
     web_sys::window()
@@ -198,21 +188,16 @@ pub async fn run() {
 
     let _ = event_loop.run(move |event, elwt| 
         match event {
+            Event::AboutToWait => {
+                state.window().request_redraw();
+            }
             Event::WindowEvent {
                 ref event,
                 window_id,
             }   if window_id == state.window().id() => if !state.input(event) {
                 match event {
-                    // WindowEvent::CloseRequested
-                    // | WindowEvent::KeyboardInput {
-                    //     event:
-                    //         KeyEvent {
-                    //             state: ElementState::Pressed,
-                    //             physical_key: PhysicalKey::Code(KeyCode::Escape),
-                    //             ..
-                    //         },
-                    //     ..
-                    // } => {}, //event_loop.set_control_flow(ControlFlow::Wait),
+                    WindowEvent::CloseRequested
+                     => elwt.exit(),
                     WindowEvent::Resized(physical_size) => {
                         state.resize(*physical_size);
                     }
