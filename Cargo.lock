@@ -134,14 +134,20 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "cfg-if",
+ "console_error_panic_hook",
+ "console_log",
  "gloo-timers",
  "http",
  "leptos",
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
+ "log",
  "serde",
  "thiserror",
+ "web-sys",
+ "wgpu",
+ "winit",
 ]
 
 [[package]]

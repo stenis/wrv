@@ -1,4 +1,6 @@
-use wasm_bindgen::prelude::*;
+#![allow(dead_code)]
+
+use leptos::{*, html::*};
 
 use winit::{
     event::*,
@@ -7,11 +9,15 @@ use winit::{
     dpi::PhysicalSize,
 };
 
-#[wasm_bindgen]
-pub async fn start() {
-    run().await
+#[component]
+pub fn WCanvas() -> impl IntoView {
+    let _node_ref = create_node_ref::<Div>();
+    view! {
+        <div _ref=_node_ref>
+            "WCanvas"
+        </div>
+    }
 }
-
 struct State {
     surface: wgpu::Surface,
     device: wgpu::Device,
@@ -133,8 +139,8 @@ impl State {
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
                             r: 0.1,
-                            g: 0.1,
-                            b: 1.0,
+                            g: 1.0,
+                            b: 0.1,
                             a: 1.0,
                         }),
                         store: wgpu::StoreOp::Store,
@@ -155,26 +161,33 @@ impl State {
 }
 
 pub async fn run() {
+    #[cfg(wasm_platform)]
     use winit::platform::web::EventLoopExtWebSys;
+    #[cfg(wasm_platform)]
     use winit::platform::web::WindowExtWebSys;
-    use winit::platform::web::WindowBuilderExtWebSys;
 
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     console_log::init_with_level(log::Level::Warn).expect("Couldn't initialize logger");
 
     let event_loop = EventLoop::new().unwrap();
     
-    let window = WindowBuilder::new()
-        .with_append(true)
-        .with_inner_size(PhysicalSize::new(384, 384))
+    let builder = WindowBuilder::new().with_inner_size(PhysicalSize::new(384, 384));
+
+    #[cfg(wasm_platform)]
+    let builder = {
+        use winit::platform::web::WindowBuilderExtWebSys;
+        builder.with_append(true)
+    };
+   
+    let window = builder
         .build(&event_loop)
         .unwrap();
 
     let s = window.inner_size();
-    log::debug!("{}:{}", s.height, s.width);
 
     let mut state = State::new(window).await;
 
+    #[cfg(wasm_platform)]
     web_sys::window()
         .and_then(|win| win.document())
         .and_then(|doc| {
@@ -187,6 +200,7 @@ pub async fn run() {
         })
         .expect("Couldn't append canvas to document body.");
 
+    #[cfg(wasm_platform)]
     event_loop.spawn(move |event, elwt| 
         match event {
             Event::AboutToWait => {

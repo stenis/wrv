@@ -1,9 +1,11 @@
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+
 pub mod error_template;
 pub mod todo;
 pub mod buttons;
+pub mod wcanvas;
 
 use buttons::Counter;
 
@@ -21,10 +23,9 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/serverfunc.css"/>
         // <script type="module" inner_html=code></script>
         <Script type_="module">
-            "import init, { greet, start } from \"./gfx.js\";
+            "import init, { start } from \"./gfx.js\";
             init().then(async () => { 
                 console.log(\"WASM Loaded\");
-                console.log(greet(\"test\"));
                 await start();
             })"
         </Script>
