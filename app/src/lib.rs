@@ -8,6 +8,7 @@ pub mod buttons;
 pub mod wcanvas;
 
 use buttons::Counter;
+use wcanvas::WCanvas;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -21,18 +22,10 @@ pub fn App() -> impl IntoView {
         // <Stylesheet id="leptos" href="/pico.min.css"/>
         // <Stylesheet id="leptos" href="/pkg/start-axum-workspace.css"/>
         <Stylesheet id="leptos" href="/pkg/serverfunc.css"/>
-        // <script type="module" inner_html=code></script>
-        <Script type_="module">
-            "import init, { start } from \"./gfx.js\";
-            init().then(async () => { 
-                console.log(\"WASM Loaded\");
-                await start();
-            })"
-        </Script>
         <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         // sets the document title
-        <Title text="Welcome to Leptos"/>
+        <Title text="HEY"/>
 
         // content for this welcome page
         <Router>
@@ -54,13 +47,18 @@ fn HomePage() -> impl IntoView {
     let (value, set_value) = create_signal(0);
 
     view! {
-        <div class="bg-gradient-to-tl from-blue-800 to-blue-500 text-white font-mono flex flex-col min-h-screen">
-            <h1>serverfunc.</h1>
-            <div id="draw-area" class="w-96 h-96 mx-auto"></div>
+        <div class="bg-gradient-to-b from-gray-500 to-gray-700 text-black font-sans flex flex-col min-h-screen">
+            <h1 class="my-2 font-thin text-3xl text-sky-200/90">SERVERFUNC</h1>
+            <p>__</p>
+            <div id="draw-area" class="w-96 h-96 mx-auto bg-gray-500/30">
+                <WCanvas />
+            </div>
             <div class="flex flex-wrap m-auto">
-                <button on:click=move |_| set_value.update(|value| *value -= 1) 
-                    class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
-                    "-"
+                <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 
+                    class="rounded-lg px-1py-1 px-2 m-1 text-gray-100 bg-gray-400/70">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
                 </button>
                 <button class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-800 border-blue-900 text-white">
                     {value}
@@ -71,7 +69,6 @@ fn HomePage() -> impl IntoView {
                 </button>
             </div>
             <div class="flex flex-wrap m-auto">
-                // <CounterB />
                 <Counter />
             </div>
         </div>

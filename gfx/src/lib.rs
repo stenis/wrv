@@ -7,11 +7,6 @@ use winit::{
     dpi::PhysicalSize,
 };
 
-#[wasm_bindgen]
-pub async fn start() {
-    run().await
-}
-
 struct State {
     surface: wgpu::Surface,
     device: wgpu::Device,
@@ -27,6 +22,9 @@ struct State {
 impl State {
     // Creating some of the wgpu types requires async code
      async fn new(window: Window) -> Self {
+
+        logging::log!("state constructor.");
+
         //let size = window.inner_size(); //PhysicalSize::new(384, 384);//
         let size = PhysicalSize::new(384, 384);
         
@@ -180,8 +178,8 @@ pub async fn run() {
         .and_then(|doc| {
             let dst = doc.get_element_by_id("draw-area")?;
             let canvas = web_sys::Element::from(state.window().canvas()?);
-            web_sys::console::log_1(&dst.id().into());
-
+            //web_sys::console::log_1(&dst.id().into());
+            logging::log!("found canvas");
             dst.append_child(&canvas).ok()?;
             Some(())
         })

@@ -1,6 +1,6 @@
 
 use gloo_timers::future::TimeoutFuture;
-use leptos::{*, html::*};
+use leptos::*;
 
 // Here we define an async function
 // This could be anything: a network request, database read, etc.
