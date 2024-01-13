@@ -12,19 +12,12 @@ crate-type = ["cdylib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cfg-if.workspace = true
-env_logger = "0.10.1"
+leptos.workspace = true
+leptos_meta.workspace = true
+console_error_panic_hook = { workspace = true }  
+console_log = { workspace = true }
 log.workspace = true
-winit = { version = "0.29.4", features = ["rwh_05"] }
-pollster = "0.3"
-console_error_panic_hook = "0.1.6"
-console_log = "1.0"
-wgpu = { version = "0.18" }
-wasm-bindgen = "0.2.89"
-wasm-bindgen-futures = "0.4.39"
-web-sys = { version = "0.3.64", features = [ 
-    "Document",
-    "Window",
-    "Element",
-    "console",
-]}
+cfg-if.workspace = true
+winit = { workspace = true }
+wgpu = { workspace = true }
+web-sys = { workspace = true }

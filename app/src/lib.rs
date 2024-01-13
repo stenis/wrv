@@ -25,7 +25,7 @@ pub fn App() -> impl IntoView {
         <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         // sets the document title
-        <Title text="HEY"/>
+        <Title text="HEY!" />
 
         // content for this welcome page
         <Router>
@@ -47,9 +47,8 @@ fn HomePage() -> impl IntoView {
     let (value, set_value) = create_signal(0);
 
     view! {
-        <div class="bg-gradient-to-b from-gray-500 to-gray-700 text-black font-sans flex flex-col min-h-screen">
+        <div class="text-black font-sans flex flex-col min-h-screen">
             <h1 class="my-2 font-thin text-3xl text-sky-200/90">SERVERFUNC</h1>
-            <p>__</p>
             <div id="draw-area" class="w-96 h-96 mx-auto bg-gray-500/30">
                 <WCanvas />
             </div>
