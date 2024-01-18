@@ -25,16 +25,16 @@ thiserror = "1.0.40"
 tokio = { version = "1.26.0", features = ["full"] }
 tower = { version = "0.4.13", features = ["full"] }
 tower-http = { version = "0.4.0", features = ["full"] }
-wasm-bindgen = "=0.2.89"
+wasm-bindgen = "0.2.90"
 wasm-bindgen-futures = "0.4.39"
-web-sys = { version = "0.3.64", features = [ 
+web-sys = { version = "0.3.67", features = [ 
     "Document",
     "Window",
     "Element",
     "console",
 ]}
 winit = { version = "0.29.4", features = ["rwh_05"] }
-wgpu = { version = "0.18" }
+wgpu = { version = "0.19" }
 
 # See https://github.com/akesson/cargo-leptos for documentation of all the parameters.
 

@@ -20,8 +20,9 @@ cfg-if.workspace = true
 thiserror.workspace = true
 serde = "1.0.193"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
-
 gfx = { path = "../gfx", optional = true }
+web-sys = { workspace = true, optional = true }
+leptos-use = "0.9.0"
 
 #[target.'cfg(target_arch = "wasm")'.dependencies]
 
@@ -35,6 +36,6 @@ hydrate = [
     #"dep:console_error_panic_hook",
     #"dep:winit",
     #"dep:wgpu",
-    #"dep:web-sys" 
+    "dep:web-sys" 
     ]
 ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum"]

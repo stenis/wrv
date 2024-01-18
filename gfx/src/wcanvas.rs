@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use leptos::NodeRef;
 use winit::{
     dpi::PhysicalSize,
     event::*,
@@ -7,8 +8,8 @@ use winit::{
     window::{Window, WindowBuilder},
 };
 
-struct State {
-    surface: wgpu::Surface,
+struct State<'a> {
+    surface: wgpu::Surface<'a>,
     device: wgpu::Device,
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
@@ -16,12 +17,12 @@ struct State {
     // The window must be declared after the surface so
     // it gets dropped after it as the surface contains
     // unsafe references to the window's resources.
-    window: Window,
+    window: std::sync::Arc<Window>,
 }
 
-impl State {
+impl<'a> State<'a> {
     // Creating some of the wgpu types requires async code
-    async fn new(window: Window) -> Self {
+    async fn new(window: std::sync::Arc<Window>) -> Self {
         //let size = window.inner_size(); //PhysicalSize::new(384, 384);//
         let size = PhysicalSize::new(384, 384);
 
@@ -36,7 +37,7 @@ impl State {
         //
         // The surface needs to live as long as the window that created it.
         // State owns the window so this should be safe.
-        let surface = unsafe { instance.create_surface(&window) }.unwrap();
+        let surface = instance.create_surface(window.clone()).unwrap();
 
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -52,10 +53,10 @@ impl State {
         let (device, queue) = adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
-                    features: wgpu::Features::empty(),
+                    required_features: wgpu::Features::empty(),
                     // WebGL doesn't support all of wgpu's features, so if
                     // we're building for the web we'll have to disable some.
-                    limits: if cfg!(target_arch = "wasm32") {
+                    required_limits: if cfg!(target_arch = "wasm32") {
                         wgpu::Limits::downlevel_webgl2_defaults()
                     } else {
                         wgpu::Limits::default()
@@ -85,16 +86,17 @@ impl State {
             present_mode: surface_caps.present_modes[0],
             alpha_mode: surface_caps.alpha_modes[0],
             view_formats: vec![],
+            desired_maximum_frame_latency: 2,
         };
         surface.configure(&device, &config);
-
+        
         Self {
-            window,
             surface,
             device,
             queue,
             config,
             size,
+            window,
         }
     }
 
@@ -121,6 +123,7 @@ impl State {
         let view = output
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
+        
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -156,7 +159,7 @@ impl State {
     }
 }
 
-pub async fn run() {
+pub async fn run(container: &NodeRef<leptos::html::Div>) {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     // console_log::init_with_level(log::Level::Warn).expect("Couldn't initialize logger");
 
@@ -173,21 +176,14 @@ pub async fn run() {
         .with_append(true)
         .with_inner_size(PhysicalSize::new(384, 384));
 
-    let window = builder.build(&event_loop).unwrap();
+    let window = std::sync::Arc::new(builder.build(&event_loop).unwrap());
 
-    let mut state = State::new(window).await;
+    let mut state = State::new(window.clone()).await;
 
-    web_sys::window()
-        .and_then(|win| win.document())
-        .and_then(|doc| {
-            let dst = doc.get_element_by_id("draw-area")?;
-            let canvas = web_sys::Element::from(state.window().canvas()?);
-            //web_sys::console::log_1(&dst.id().into());
-            //dst.Clear();
-            dst.append_child(&canvas).ok()?;
-            Some(())
-        })
-        .expect("Couldn't append canvas to document body.");
+    let canvas = web_sys::Element::from(state.window().canvas().unwrap());
+    let container = container.get().unwrap();
+    container.append_child(&canvas).unwrap();
+    std::mem::forget(window);
 
     event_loop.spawn(move |event, elwt| match event {
         Event::AboutToWait => {

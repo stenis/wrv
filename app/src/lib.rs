@@ -49,9 +49,9 @@ fn HomePage() -> impl IntoView {
     view! {
         <div class="text-black font-sans flex flex-col min-h-screen">
             <h1 class="my-2 font-thin text-3xl text-sky-200/90">SERVERFUNC</h1>
-            <div id="draw-area" class="w-96 h-96 mx-auto bg-gray-500/30">
-                <WCanvas />
-            </div>
+            
+            <WCanvas />
+            
             <div class="flex flex-wrap m-auto">
                 <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 
                     class="rounded-lg px-1py-1 px-2 m-1 text-gray-100 bg-gray-400/70">

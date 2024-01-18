@@ -21,3 +21,4 @@ cfg-if.workspace = true
 winit = { workspace = true }
 wgpu = { workspace = true }
 web-sys = { workspace = true }
+leptos-use = "0.9.0"
