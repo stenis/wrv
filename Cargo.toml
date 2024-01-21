@@ -120,4 +120,3 @@ lib-default-features = false
 
 lib-cargo-args = "--timings"
 bin-cargo-args = "--timings"
-#bin-cargo-args = "--cfg web_sys_unstable_api"

@@ -13,6 +13,7 @@ leptos.workspace = true
 leptos_meta.workspace = true
 leptos_router.workspace = true
 leptos_axum = { workspace = true, optional = true }
+leptos-use = { version = "0.9.0", optional = false }
 
 log.workspace = true
 http.workspace = true
@@ -22,9 +23,6 @@ serde = "1.0.193"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
 gfx = { path = "../gfx", optional = true }
 web-sys = { workspace = true, optional = true }
-leptos-use = "0.9.0"
-
-#[target.'cfg(target_arch = "wasm")'.dependencies]
 
 [features]
 default = []
@@ -36,6 +34,13 @@ hydrate = [
     #"dep:console_error_panic_hook",
     #"dep:winit",
     #"dep:wgpu",
-    "dep:web-sys" 
+    "dep:web-sys",
+    #"dep:leptos-use",
     ]
-ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum"]
+ssr = [
+    "leptos/ssr",
+    "leptos-use/ssr",
+    "leptos_meta/ssr", 
+    "leptos_router/ssr", 
+    "dep:leptos_axum"
+]

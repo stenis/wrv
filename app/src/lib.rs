@@ -30,7 +30,7 @@ pub fn App() -> impl IntoView {
         // content for this welcome page
         <Router>
             <body>
-                <main class="my-0 mx-auto max-w-3xl text-center">
+                <main class="bg-slate-400 my-0 mx-auto text-center">
                     <Routes>
                         <Route path="" view=HomePage/>
                     </Routes>
@@ -49,27 +49,25 @@ fn HomePage() -> impl IntoView {
     view! {
         <div class="text-black font-sans flex flex-col min-h-screen">
             <h1 class="my-2 font-thin text-3xl text-sky-200/90">SERVERFUNC</h1>
-            
             <WCanvas />
-            
-            <div class="flex flex-wrap m-auto">
-                <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 
-                    class="rounded-lg px-1py-1 px-2 m-1 text-gray-100 bg-gray-400/70">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                </button>
-                <button class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-800 border-blue-900 text-white">
-                    {value}
-                </button>
-                <button on:click=move |_| set_value.update(|value| *value += 1) 
-                    class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
-                    "+"
-                </button>
-            </div>
-            <div class="flex flex-wrap m-auto">
-                <Counter />
-            </div>
+            // <div class="flex flex-wrap m-auto">
+            //     <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 
+            //         class="rounded-lg px-1py-1 px-2 m-1 text-gray-100 bg-gray-400/70">
+            //         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
+            //             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            //         </svg>
+            //     </button>
+            //     <button class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-800 border-blue-900 text-white">
+            //         {value}
+            //     </button>
+            //     <button on:click=move |_| set_value.update(|value| *value += 1) 
+            //         class="rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
+            //         "+"
+            //     </button>
+            // </div>
+            // <div class="flex flex-wrap m-auto">
+            //     <Counter />
+            // </div>
         </div>
     }
 }
