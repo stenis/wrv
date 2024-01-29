@@ -21,6 +21,7 @@ cfg-if.workspace = true
 thiserror.workspace = true
 serde = "1.0.193"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
+airspy = { path = "../airspy", optional = true }
 gfx = { path = "../gfx", optional = true }
 web-sys = { workspace = true, optional = true }
 
@@ -30,6 +31,7 @@ hydrate = [
     "leptos/hydrate", 
     "leptos_meta/hydrate", 
     "leptos_router/hydrate",
+    "dep:airspy",
     "dep:gfx",
     #"dep:console_error_panic_hook",
     #"dep:winit",

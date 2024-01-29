@@ -181,7 +181,7 @@ pub async fn run(container: &NodeRef<leptos::html::Div>) {
     let mut state = State::new(window.clone()).await;
 
     let canvas = web_sys::Element::from(state.window().canvas().unwrap());
-    let container = container.get().unwrap();
+    let container = container.get_untracked().unwrap();
     container.append_child(&canvas).unwrap();
     std::mem::forget(window);
 
