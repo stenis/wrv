@@ -1,22 +1,14 @@
 use js_sys::Uint32Array;
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{UsbControlTransferParameters, UsbDevice, UsbDeviceRequestOptions, UsbInTransferResult, UsbOutTransferResult, UsbRecipient, UsbRequestType, UsbTransferStatus};
-use serde::{Serialize, Deserialize};
+use web_sys::{UsbControlTransferParameters, UsbDevice, UsbDeviceFilter, UsbDeviceRequestOptions, UsbInTransferResult, UsbOutTransferResult, UsbRecipient, UsbRequestType};
 
-const AIRSPY_RECEIVER_MODE: u8 = 1;
+const AIRSPY_RECEIVER_MODE: u16 = 1;
 const AIRSPY_GET_SAMPLERATES: u8 = 25;
 const AIRSPY_SET_FREQ: u8 = 13;
 const RECEIVER_MODE_OFF: u8 = 0;
 const RECEIVER_MODE_RX: u8 = 1;
 
-#[repr(u8)]
-pub enum ReceiverMode { Off, Rx, }
-impl From<ReceiverMode> for u8 {
-    fn from(rm: ReceiverMode) -> u8 {
-        rm as u8
-    }
-}
 #[derive(Debug)]
 pub struct Airspy {
     pub device: UsbDevice,
@@ -33,37 +25,48 @@ impl Airspy {
     }
 
     pub async fn read_samplerates(&self, _log: impl Fn(String) -> ()) -> Result<Vec<u32>> {
-        let r1 = self.control_transfer_in(&create_setup(AIRSPY_GET_SAMPLERATES, 0), 4).await?;        
-        let len : u16 = (Uint32Array::new(&r1.data().unwrap().buffer()).length() * 4) as u16;
-        let r2 = self.control_transfer_in(&create_setup(AIRSPY_GET_SAMPLERATES, len), len * 4).await?;
-        let sample_rates = Uint32Array::new(&r2.data().unwrap().buffer()).to_vec();
+        let setup = create_setup(Setup { request: AIRSPY_GET_SAMPLERATES, ..Default::default() });
+        let res = self.control_transfer_in(&setup, 4).await?;        
+        let index : u16 = (Uint32Array::new(&res.data().unwrap().buffer()).length() * 4) as u16; // index is length in this context.
+        let setup = create_setup(Setup { request: AIRSPY_GET_SAMPLERATES, index, ..Default::default() });
+        let res = self.control_transfer_in(&setup, index * 4).await?;
+        let sample_rates = Uint32Array::new(&res.data().unwrap().buffer()).to_vec();
 
         Ok(sample_rates)
     }
 
-    pub fn start() {
-        todo!()
+    pub async fn start(&self)-> Result<()> {
+        self.set_receiver_mode(AIRSPY_RECEIVER_MODE).await?;
+        Ok(())
     }
 
-    pub fn stop() {
-        todo!()
+    pub async fn stop(&self) -> Result<()> {
+        JsFuture::from(self.device.release_interface(0)).await?;
+        JsFuture::from(self.device.close()).await?; 
+        Ok(())
     }
 
-    pub async fn set_receiver_mode(&self) -> Result<()>{
-        let setup = create_setup(AIRSPY_RECEIVER_MODE, 0);
-		let _res = self.control_transfer_out(&setup).await?;
-        
+    pub async fn set_receiver_mode(&self, value: u16) -> Result<()>{
+        let setup = create_setup(Setup { value, ..Default::default() });
+		let _ = self.control_transfer_out(&setup).await?;
         Ok(())
     }
 }
 
-fn create_setup(request: u8, index: u16) -> UsbControlTransferParameters {
+#[derive(Default)]
+struct Setup {
+    value: u16,
+    request: u8,
+    index: u16,
+}
+
+fn create_setup(setup: Setup) -> UsbControlTransferParameters {
     UsbControlTransferParameters::new(
-        index,
+        setup.index,
         UsbRecipient::Device,
-        request,
+        setup.request,
         UsbRequestType::Vendor,
-        0,
+        setup.value,
     )
 }
 
@@ -72,15 +75,15 @@ pub async fn open_async() -> Result<Airspy> {
     let navigator: web_sys::Navigator = window.navigator();
     let usb = navigator.usb();
     
-    //TODO: try and remove Filters and create array to pass to UsbDeviceRequestOptions::new
-    let options = serde_wasm_bindgen::to_value(&Filters::new())?;
-    let filters = vec![Filter { vendor_id: 0x1d50 }];
-
-    let x = UsbDeviceRequestOptions::new(&serde_wasm_bindgen::to_value(&filters)?);
-    let device: UsbDevice = JsFuture::from(usb.request_device(&x)).await?.dyn_into()?;
-    //let device: UsbDevice = JsFuture::from(usb.request_device(&options.into())).await?.dyn_into()?;
-
+    let mut filter =  UsbDeviceFilter::new();
+    filter.vendor_id(0x1d50);
+    let arr = js_sys::Array::new_with_length(1);
+    arr.set(0, filter.into());
+    let filters = UsbDeviceRequestOptions::new(&arr.into());
+    let device: UsbDevice = JsFuture::from(usb.request_device(&filters)).await?.dyn_into()?;
+    
     JsFuture::from(device.open()).await?;
+    JsFuture::from(device.select_configuration(1)).await?;
     JsFuture::from(device.claim_interface(0)).await?;
 
     Ok(Airspy { device })
@@ -97,28 +100,5 @@ pub enum Error {
 impl From<JsValue> for Error {
     fn from(e: JsValue) -> Self {
         Self::BrowserError(format!("{:?}", e))
-    }
-}
-
-impl From<serde_wasm_bindgen::Error> for Error {
-    fn from(e: serde_wasm_bindgen::Error) -> Self {
-        Self::BrowserError(format!("{:?}", e))
-    }
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Filter {
-    #[serde(rename = "vendorId")]
-    pub vendor_id: i32,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Filters {
-    pub filters: Vec<Filter>,
-}
-
-impl Filters {
-    pub fn new() -> Self {
-        Filters{ filters: vec![Filter { vendor_id: 0x1d50 }]}
     }
 }

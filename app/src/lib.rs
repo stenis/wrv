@@ -25,7 +25,7 @@ pub fn App() -> impl IntoView {
         <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         // sets the document title
-        <Title text="HEY!" />
+        <Title text="USB RADIO" />
 
         // content for this welcome page
         <Router>
@@ -48,7 +48,7 @@ fn HomePage() -> impl IntoView {
 
     view! {
         <div class="text-black font-sans flex flex-col min-h-screen">
-            <h1 class="my-2 font-thin text-3xl text-sky-200/90">SERVERFUNC</h1>
+            <h1 class="my-2 font-thin text-3xl text-sky-200/90" >USB RADIO</h1>
             <WCanvas />
             // <div class="flex flex-wrap m-auto">
             //     <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 

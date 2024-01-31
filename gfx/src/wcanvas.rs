@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
 use leptos::NodeRef;
+use web_sys::HtmlCanvasElement;
+use wgpu::SurfaceTarget;
 use winit::{
     dpi::PhysicalSize,
     event::*,
@@ -22,7 +24,7 @@ struct State<'a> {
 
 impl<'a> State<'a> {
     // Creating some of the wgpu types requires async code
-    async fn new(window: std::sync::Arc<Window>) -> Self {
+    async fn new(window: std::sync::Arc<Window>, canvas: &web_sys::HtmlCanvasElement) -> Self {
         //let size = window.inner_size(); //PhysicalSize::new(384, 384);//
         let size = PhysicalSize::new(384, 384);
 
@@ -37,8 +39,9 @@ impl<'a> State<'a> {
         //
         // The surface needs to live as long as the window that created it.
         // State owns the window so this should be safe.
-        let surface = instance.create_surface(window.clone()).unwrap();
-
+        //let surface = instance.create_surface(window.clone()).unwrap();
+        let surface = instance.create_surface(SurfaceTarget::Canvas(canvas.clone())).unwrap();
+        
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
                 power_preference: wgpu::PowerPreference::default(),
@@ -137,10 +140,10 @@ impl<'a> State<'a> {
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.1,
-                            g: 0.5,
-                            b: 0.333,
-                            a: 1.0,
+                            r: 0.921,
+                            g: 0.76,
+                            b: 0.83,
+                            a: 1.0, //#EBC2D5
                         }),
                         store: wgpu::StoreOp::Store,
                     },
@@ -159,7 +162,7 @@ impl<'a> State<'a> {
     }
 }
 
-pub async fn run(container: &NodeRef<leptos::html::Div>) {
+pub async fn run(canvas: &NodeRef<leptos::html::Canvas>) {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     // console_log::init_with_level(log::Level::Warn).expect("Couldn't initialize logger");
 
@@ -173,16 +176,17 @@ pub async fn run(container: &NodeRef<leptos::html::Div>) {
 
     let event_loop = EventLoop::new().unwrap();
     let builder = WindowBuilder::new()
-        .with_append(true)
         .with_inner_size(PhysicalSize::new(384, 384));
 
     let window = std::sync::Arc::new(builder.build(&event_loop).unwrap());
 
-    let mut state = State::new(window.clone()).await;
+    //let canvas : web_sys::HtmlCanvasElement = web_sys::Element::from();
+    let x : &HtmlCanvasElement = &*canvas.get_untracked().unwrap(); 
+    let mut state = State::new(window.clone(), x).await;
 
-    let canvas = web_sys::Element::from(state.window().canvas().unwrap());
-    let container = container.get_untracked().unwrap();
-    container.append_child(&canvas).unwrap();
+    //let canvas = web_sys::Element::from(state.window().canvas().unwrap());
+    // let container = container.get_untracked().unwrap();
+    // container.append_child(&canvas).unwrap();
     std::mem::forget(window);
 
     event_loop.spawn(move |event, elwt| match event {
