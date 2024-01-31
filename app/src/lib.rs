@@ -6,6 +6,7 @@ pub mod error_template;
 pub mod todo;
 pub mod buttons;
 pub mod wcanvas;
+pub mod page;
 
 use buttons::Counter;
 use wcanvas::WCanvas;
@@ -69,5 +70,15 @@ fn HomePage() -> impl IntoView {
             //     <Counter />
             // </div>
         </div>
+        <page::Page heading="HEADING">
+            <p class="text-left m-3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent maximus felis eget quam fermentum euismod. Proin sagittis quam sodales tortor molestie imperdiet. Praesent ipsum erat, egestas pulvinar dui sed, ornare eleifend nisi. Curabitur sit amet accumsan mauris. Mauris finibus fermentum commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque cursus tortor ac sagittis accumsan. Fusce congue commodo commodo. Nam consectetur varius diam at vestibulum. Nam nec laoreet elit. Pellentesque quis dui quis quam maximus maximus. Duis ornare augue nunc, eget varius mauris pellentesque id. In ut tortor diam.
+            </p>
+            <p class="text-left m-3">
+                Cras ac quam ac elit maximus euismod. Nunc dignissim quam id lobortis rutrum. Etiam non laoreet enim. In maximus turpis non ante gravida, eget varius mauris ornare. Etiam vitae lorem id ligula mollis tempor vel a ex. Fusce mi mauris, vulputate nec nulla nec, ultricies fermentum neque. Pellentesque vulputate sed nunc et ullamcorper. Nullam vitae laoreet est, eget congue enim. Pellentesque velit mauris, tristique a rutrum vel, interdum et purus.
+            </p>
+        </page::Page>
+        <page::Page heading="HEADING #2"><p>bottom</p></page::Page>
+        
     }
 }

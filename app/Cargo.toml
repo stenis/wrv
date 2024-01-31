@@ -23,7 +23,8 @@ serde = "1.0.193"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
 airspy = { path = "../airspy", optional = true }
 gfx = { path = "../gfx", optional = true }
-web-sys = { workspace = true, optional = true }
+web-sys = { workspace = true }
+wasm-bindgen.workspace = true
 
 [features]
 default = []
@@ -36,7 +37,7 @@ hydrate = [
     #"dep:console_error_panic_hook",
     #"dep:winit",
     #"dep:wgpu",
-    "dep:web-sys",
+    #"dep:web-sys",
     #"dep:leptos-use",
     ]
 ssr = [
