@@ -1,3 +1,5 @@
+#![feature(try_blocks)]
+
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -22,18 +24,10 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-
-        // injects a stylesheet into the document <head>
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
-        // <Stylesheet id="leptos" href="/pico.min.css"/>
-        // <Stylesheet id="leptos" href="/pkg/start-axum-workspace.css"/>
         <Stylesheet id="leptos" href="/pkg/serverfunc.css"/>
         <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        // sets the document title
         <Title text="USB RADIO" />
 
-        // content for this welcome page
         <Router>
             <body>
                 <main class="bg-slate-400 my-0 mx-auto text-center">
@@ -52,22 +46,17 @@ fn HomePage() -> impl IntoView {
     // Creates a reactive value to update the button
     //let (value, set_value) = create_signal(0);
     let handle = window_event_listener(ev::keydown, |ev| {
-        let code = ev.code();
-        let h : f64 = window().inner_height().unwrap().as_f64().unwrap();
-        let mut ops = ScrollToOptions::new();
-        ops.behavior(ScrollBehavior::Smooth);
+        let _ : Option<_> = try {
+            let h : f64 = window().inner_height().ok()?.as_f64()?;
+            let mut ops = ScrollToOptions::new();
+            ops.behavior(ScrollBehavior::Smooth);
 
-        match ev.key_code() {
-            37 => {
-                ops.top(-h);
-                window().scroll_by_with_scroll_to_options(&ops);
-            }, // left
-            39 => {
-                ops.top(h);
-                window().scroll_by_with_scroll_to_options(&ops);
-            }, // right
-            _ => (),
-        }
+            match ev.key_code() {
+                37 => window().scroll_by_with_scroll_to_options(&ops.top(-h)), // left -> previous
+                39 => window().scroll_by_with_scroll_to_options(&ops.top(h)), // right -> next
+                _ => (),
+            }
+        };
     });
     on_cleanup(move || handle.remove());
 
