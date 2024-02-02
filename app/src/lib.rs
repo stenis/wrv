@@ -4,8 +4,6 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_use::use_window;
-use logging::log;
-use wasm_bindgen::{prelude::*, JsCast};
 
 pub mod error_template;
 pub mod todo;
@@ -14,9 +12,8 @@ pub mod wcanvas;
 pub mod components;
 pub mod utility;
 
-use buttons::Counter;
+//use buttons::Counter;
 use wcanvas::WCanvas;
-use web_sys::{ScrollBehavior, ScrollToOptions};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -45,19 +42,7 @@ pub fn App() -> impl IntoView {
 fn HomePage() -> impl IntoView {
     // Creates a reactive value to update the button
     //let (value, set_value) = create_signal(0);
-    let handle = window_event_listener(ev::keydown, |ev| {
-        let _ : Option<_> = try {
-            let h : f64 = window().inner_height().ok()?.as_f64()?;
-            let mut ops = ScrollToOptions::new();
-            ops.behavior(ScrollBehavior::Smooth);
-
-            match ev.key_code() {
-                37 => window().scroll_by_with_scroll_to_options(&ops.top(-h)), // left -> previous
-                39 => window().scroll_by_with_scroll_to_options(&ops.top(h)), // right -> next
-                _ => (),
-            }
-        };
-    });
+    let handle = window_event_listener(ev::keydown, utility::keyboard_scroll);
     on_cleanup(move || handle.remove());
 
     view! {

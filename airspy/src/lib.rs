@@ -1,4 +1,5 @@
 use js_sys::Uint32Array;
+use serde::de::value;
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{UsbControlTransferParameters, UsbDevice, UsbDeviceFilter, UsbDeviceRequestOptions, UsbInTransferResult, UsbOutTransferResult, UsbRecipient, UsbRequestType};
@@ -25,11 +26,9 @@ impl Airspy {
     }
 
     pub async fn read_samplerates(&self, _log: impl Fn(String) -> ()) -> Result<Vec<u32>> {
-        let setup = create_setup(Setup { request: AIRSPY_GET_SAMPLERATES, ..Default::default() });
-        let res = self.control_transfer_in(&setup, 4).await?;        
-        let index : u16 = (Uint32Array::new(&res.data().unwrap().buffer()).length() * 4) as u16; // index is length in this context.
-        let setup = create_setup(Setup { request: AIRSPY_GET_SAMPLERATES, index, ..Default::default() });
-        let res = self.control_transfer_in(&setup, index * 4).await?;
+        let res = self.control_transfer_in(&Setup::new(AIRSPY_GET_SAMPLERATES), 4).await?;        
+        let index = (Uint32Array::new(&res.data().unwrap().buffer()).length() * 4) as u16; // index is length in this context.
+        let res = self.control_transfer_in(&Setup::index(AIRSPY_GET_SAMPLERATES, index), index * 4).await?;
         let sample_rates = Uint32Array::new(&res.data().unwrap().buffer()).to_vec();
 
         Ok(sample_rates)
@@ -47,7 +46,7 @@ impl Airspy {
     }
 
     pub async fn set_receiver_mode(&self, value: u16) -> Result<()>{
-        let setup = create_setup(Setup { value, ..Default::default() });
+        let setup = to_usb_control_transfer_parameters(Setup { value, ..Default::default() });
 		let _ = self.control_transfer_out(&setup).await?;
         Ok(())
     }
@@ -60,7 +59,21 @@ struct Setup {
     index: u16,
 }
 
-fn create_setup(setup: Setup) -> UsbControlTransferParameters {
+impl Setup {
+    pub fn new (request: u8) -> UsbControlTransferParameters {
+        to_usb_control_transfer_parameters(Setup { request, ..Default::default() })
+    }
+
+    pub fn index (request: u8, index: u16) -> UsbControlTransferParameters {
+        to_usb_control_transfer_parameters(Setup { request, index, ..Default::default() })
+    }
+
+    pub fn value_index (request: u8, value: u16, index: u16) -> UsbControlTransferParameters {
+        to_usb_control_transfer_parameters(Setup { request, value, index })
+    }
+}
+
+fn to_usb_control_transfer_parameters(setup: Setup) -> UsbControlTransferParameters {
     UsbControlTransferParameters::new(
         setup.index,
         UsbRecipient::Device,

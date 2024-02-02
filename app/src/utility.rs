@@ -1,14 +1,16 @@
 use leptos::{ev::click, *};
-use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
+use web_sys::{KeyboardEvent, ScrollBehavior, ScrollToOptions};
 
-pub fn options() -> ScrollIntoViewOptions {
-    let mut ops = ScrollIntoViewOptions::new();
-    ops.behavior(ScrollBehavior::Smooth);
-    ops
+pub fn keyboard_scroll(ev: KeyboardEvent) {
+    let _ : Option<_> = try {
+        let h : f64 = window().inner_height().ok()?.as_f64()?;
+        let mut ops = ScrollToOptions::new();
+        ops.behavior(ScrollBehavior::Smooth);
+
+        match ev.key_code() {
+            37 => window().scroll_by_with_scroll_to_options(&ops.top(-h)), // left -> previous
+            39 => window().scroll_by_with_scroll_to_options(&ops.top(h)), // right -> next
+            _ => (),
+        }
+    };
 }
-
-// pub fn scroll_to_next_element() {
-//     if let Some(next_elem) = (&*this_ref.get_untracked().unwrap()).next_element_sibling() {
-//         next_elem.scroll_into_view_with_scroll_into_view_options(&options());
-//     }
-// }
