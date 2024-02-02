@@ -1,4 +1,4 @@
-use leptos::{ev::click, *};
+use leptos::*;
 use web_sys::{KeyboardEvent, ScrollBehavior, ScrollToOptions};
 
 pub fn keyboard_scroll(ev: KeyboardEvent) {

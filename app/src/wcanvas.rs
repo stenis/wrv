@@ -17,7 +17,7 @@ pub fn WCanvas() -> impl IntoView {
     cfg_if::cfg_if! {
         if #[cfg(not(feature = "ssr"))] {
                 spawn_local(async move {
-                    let res = airspy::open_async().await;
+                    let res = airspy::Airspy::open_async().await;
                     match res {
                         Ok(airspy) => {
                             logging::log!("{:?}", airspy.device.product_name());
@@ -44,6 +44,7 @@ pub fn WCanvas() -> impl IntoView {
             );
         }
     }
+    
     view! {
         <button type="button"
                 on:click=init

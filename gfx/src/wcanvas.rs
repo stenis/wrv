@@ -169,9 +169,7 @@ pub async fn run(canvas: &NodeRef<leptos::html::Canvas>) {
     //logging::log!("wcanvas run.");
 
     use winit::platform::web::EventLoopExtWebSys;
-    use winit::platform::web::WindowBuilderExtWebSys;
-    use winit::platform::web::WindowExtWebSys;
-
+    
     //logging::log!("wcanvas init.");
 
     let event_loop = EventLoop::new().unwrap();

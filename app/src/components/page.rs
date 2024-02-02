@@ -1,4 +1,4 @@
-use leptos::{ev::click, *};
+use leptos::*;
 use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
 
 fn options() -> ScrollIntoViewOptions {

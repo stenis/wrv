@@ -3,7 +3,6 @@
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use leptos_use::use_window;
 
 pub mod error_template;
 pub mod todo;
