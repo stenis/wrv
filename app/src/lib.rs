@@ -7,12 +7,12 @@ use leptos_router::*;
 pub mod error_template;
 pub mod todo;
 pub mod buttons;
-pub mod wcanvas;
+
+pub mod core;
 pub mod components;
-pub mod utility;
 
 //use buttons::Counter;
-use wcanvas::WCanvas;
+use components::WCanvas;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -41,12 +41,13 @@ pub fn App() -> impl IntoView {
 fn HomePage() -> impl IntoView {
     // Creates a reactive value to update the button
     //let (value, set_value) = create_signal(0);
-    let handle = window_event_listener(ev::keydown, utility::keyboard_scroll);
+    let handle = window_event_listener(ev::keydown, core::utility::keyboard_scroll);
     on_cleanup(move || handle.remove());
 
     view! {
         <div class="text-black font-sans flex flex-col min-h-screen">
             <components::Page heading="USB RADIO" hide_previous=true>
+                <components::ConnectUSB text="connect usb" />
                 <WCanvas />
             // <div class="flex flex-wrap m-auto">
             //     <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 

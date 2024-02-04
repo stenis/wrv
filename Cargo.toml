@@ -1,5 +1,5 @@
 [workspace]
-members = [ "airspy","app", "frontend", "gfx", "airspy", "server", "dsp"]
+members = [ "airspy","app", "frontend", "gfx", "server", "dsp"]
 resolver = "2" 
 
 # need to be applied only to wasm build

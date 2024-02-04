@@ -1,7 +1,16 @@
 use js_sys:: Uint32Array;
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{UsbControlTransferParameters, UsbDevice, UsbDeviceFilter, UsbDeviceRequestOptions, UsbInTransferResult, UsbOutTransferResult, UsbRecipient, UsbRequestType};
+use web_sys::{
+    UsbControlTransferParameters, 
+    UsbDevice, 
+    UsbDeviceFilter, 
+    UsbDeviceRequestOptions, 
+    UsbInTransferResult, 
+    UsbOutTransferResult, 
+    UsbRecipient, 
+    UsbRequestType,
+};
 
 const AIRSPY_RECEIVER_MODE: u8 = 1;
 const AIRSPY_GET_SAMPLERATES: u8 = 25;
@@ -14,28 +23,38 @@ pub struct Airspy {
     pub device: UsbDevice,
 }
 
+pub async fn open_async() -> Result<Airspy> {
+    let window = web_sys::window().expect("No global 'window' exists!");
+    let navigator: web_sys::Navigator = window.navigator();
+    let usb = navigator.usb();
+    
+    let mut filter =  UsbDeviceFilter::new();
+    filter.vendor_id(0x1d50);
+    let arr = js_sys::Array::new_with_length(1);
+    arr.set(0, filter.into());
+    let filters = UsbDeviceRequestOptions::new(&arr.into());
+    let device: UsbDevice = JsFuture::from(usb.request_device(&filters)).await?.dyn_into()?;
+    
+    JsFuture::from(device.open()).await?;
+    JsFuture::from(device.select_configuration(1)).await?;
+    JsFuture::from(device.claim_interface(0)).await?;
+
+    Ok(Airspy { device })
+}
+
 impl Airspy {
-
-    pub async fn open_async() -> Result<Airspy> {
-        let window = web_sys::window().expect("No global 'window' exists!");
-        let navigator: web_sys::Navigator = window.navigator();
-        let usb = navigator.usb();
-        
-        let mut filter =  UsbDeviceFilter::new();
-        filter.vendor_id(0x1d50);
-        let arr = js_sys::Array::new_with_length(1);
-        arr.set(0, filter.into());
-        let filters = UsbDeviceRequestOptions::new(&arr.into());
-        let device: UsbDevice = JsFuture::from(usb.request_device(&filters)).await?.dyn_into()?;
-        
-        JsFuture::from(device.open()).await?;
-        JsFuture::from(device.select_configuration(1)).await?;
-        JsFuture::from(device.claim_interface(0)).await?;
-
-        Ok(Airspy { device })
+    pub async fn start(&self)-> Result<()> {
+        self.set_receiver_mode(RECEIVER_MODE_RX).await?;
+        Ok(())
     }
 
-    pub async fn read_samplerates(&self, _log: impl Fn(String) -> ()) -> Result<Vec<u32>> {
+    pub async fn stop(&self) -> Result<()> {
+        JsFuture::from(self.device.release_interface(0)).await?;
+        JsFuture::from(self.device.close()).await?; 
+        Ok(())
+    }
+
+    pub async fn read_samplerates(&self) -> Result<Vec<u32>> {
         let res = self.control_transfer_in(&Setup::new(AIRSPY_GET_SAMPLERATES), 4).await?;        
         let index = (Uint32Array::new(&res.data().unwrap().buffer()).length() * 4) as u16; // index is length in this context.
         let res = self.control_transfer_in(&Setup::index(AIRSPY_GET_SAMPLERATES, index), index * 4).await?;
@@ -50,35 +69,15 @@ impl Airspy {
         Ok(buffer)
     }
 
-    pub async fn start(&self)-> Result<()> {
-        self.set_receiver_mode(RECEIVER_MODE_RX).await?;
-        Ok(())
-    }
-
-    pub async fn stop(&self) -> Result<()> {
-        JsFuture::from(self.device.release_interface(0)).await?;
-        JsFuture::from(self.device.close()).await?; 
-        Ok(())
-    }
-
-    pub async fn set_receiver_mode(&self, value: u16) -> Result<()>{
-		let _ = self.control_transfer_out(&Setup::value(AIRSPY_RECEIVER_MODE, value)).await?;
-        Ok(())
-    }
-
-    pub async fn set_freq(&self, value: u32) -> Result<()> {
+    pub async fn set_freq(&self, value: u32) -> Result<UsbOutTransferResult> {
         let data = Uint32Array::new_with_length(1);
         data.set(&value.into(), 0);
-		let _ = JsFuture::from(self.device.control_transfer_out_with_buffer_source(&Setup::new(AIRSPY_SET_FREQ), &data)).await?;
+        let setup = Setup::new(AIRSPY_SET_FREQ);
+		let res = 
+            JsFuture::from(self.device.control_transfer_out_with_buffer_source(&setup, &data))
+            .await?.dyn_into::<UsbOutTransferResult>()?;
         
-        // this.device.controlTransferOut({
-        // requestType: "vendor",
-        // recipient: "device",
-        // request: AIRSPY_SET_FREQ,
-        // value: 0,
-        // index: 0
-        // }, new Uint32Array([value]));
-        Ok(())
+        Ok(res)
     }
 
     pub async fn start_rx(&self) -> Result<()> {
@@ -86,6 +85,10 @@ impl Airspy {
         JsFuture::from(self.device.clear_halt(web_sys::UsbDirection::In, 1)).await?;
         self.set_receiver_mode(RECEIVER_MODE_RX).await?;
         Ok(())
+    }
+
+    async fn set_receiver_mode(&self, value: u16) -> Result<UsbOutTransferResult>{
+        Ok(self.control_transfer_out(&Setup::value(AIRSPY_RECEIVER_MODE, value)).await?)
     }
 
     async fn control_transfer_in(&self, setup: &UsbControlTransferParameters, index: u16) -> Result<UsbInTransferResult> {

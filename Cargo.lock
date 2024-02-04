@@ -71,7 +71,6 @@ name = "airspy"
 version = "0.1.0"
 dependencies = [
  "js-sys",
- "serde",
  "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
