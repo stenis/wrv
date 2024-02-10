@@ -21,22 +21,16 @@ pub fn App() -> impl IntoView {
 
     view! {
         <Stylesheet id="leptos" href="/pkg/serverfunc.css"/>
-        <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Title text="USB RADIO" />
-
-        <Router>
-            <body>
-                <main class="bg-slate-400 my-0 mx-auto text-center">
-                    <Routes>
-                        <Route path="" view=HomePage/>
-                    </Routes>
-                </main>
-            </body>
-        </Router>
+        <main class="bg-slate-400 my-0 mx-auto text-center">
+            <Router>     
+                <Routes>
+                    <Route path="" view=HomePage/>
+                </Routes>
+            </Router>
+        </main>
     }
 }
-
-/// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
     // Creates a reactive value to update the button
