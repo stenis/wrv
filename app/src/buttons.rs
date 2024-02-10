@@ -1,5 +1,5 @@
 
-use gloo_timers::future::TimeoutFuture;
+//use gloo_timers::future::TimeoutFuture;
 use leptos::*;
 
 // Here we define an async function
@@ -8,7 +8,7 @@ use leptos::*;
 async fn load_data(value: i32) -> i32 {
     // fake a one-second delay
     println!("got here.");
-    TimeoutFuture::new(1_000).await;
+    //TimeoutFuture::new(1_000).await;
     value * 10
 }
 

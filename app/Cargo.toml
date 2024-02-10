@@ -13,17 +13,17 @@ leptos.workspace = true
 leptos_meta.workspace = true
 leptos_router.workspace = true
 leptos_axum = { workspace = true, optional = true }
-leptos-use = { version = "0.9.0", optional = false }
+leptos-use = { workspace = true, optional = false }
 
 log.workspace = true
 http.workspace = true
 cfg-if.workspace = true
 thiserror.workspace = true
 serde = "1.0.193"
-gloo-timers = { version = "0.3.0", features = ["futures"] }
+#gloo-timers = { version = "0.3.0", features = ["futures"] }
 airspy = { path = "../airspy", optional = true }
 gfx = { path = "../gfx", optional = true }
-web-sys = { workspace = true }
+web-sys.workspace = true
 wasm-bindgen.workspace = true
 
 [features]
