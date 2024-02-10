@@ -8,7 +8,7 @@ fn options() -> ScrollIntoViewOptions {
 }
 
 #[component]
-pub fn Page(
+pub fn Slide(
     heading: &'static str,
     #[prop(default = false)] hide_next: bool,
     #[prop(default = false)] hide_previous: bool,

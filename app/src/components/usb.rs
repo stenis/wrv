@@ -4,8 +4,8 @@ use leptos::*;
 pub fn ConnectUSB(text: &'static str) -> impl IntoView {
     let init = move |_| { 
         
-    cfg_if::cfg_if! {
-        if #[cfg(not(feature = "ssr"))] {
+        cfg_if::cfg_if! {
+            if #[cfg(not(feature = "ssr"))] {
                 spawn_local(async move {
                     let res = airspy::open_async().await;
                     match res {

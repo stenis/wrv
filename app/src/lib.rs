@@ -12,7 +12,7 @@ pub mod core;
 pub mod components;
 
 //use buttons::Counter;
-use components::WCanvas;
+use components::*;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -46,8 +46,16 @@ fn HomePage() -> impl IntoView {
 
     view! {
         <div class="text-black font-sans flex flex-col min-h-screen">
-            <components::Page heading="USB RADIO" hide_previous=true>
-                <components::ConnectUSB text="connect usb" />
+            <Slide heading="Modern alternative web application " hide_previous=true>
+                <h1 class="my-2 font-thin text-3xl text-sky-200/90">Presentation / Agenda</h1>
+                <p class="text-left m-3">
+                    test
+                </p>
+                <ul>
+                    <li>Rust, Radio, web standards</li>
+                    <li>DX using Leptos, dev loop (compile -> run)</li>
+                </ul>
+                <ConnectUSB text="connect usb" />
                 <WCanvas />
             // <div class="flex flex-wrap m-auto">
             //     <button title="+" on:click=move |_| set_value.update(|value| *value -= 1) 
@@ -67,18 +75,18 @@ fn HomePage() -> impl IntoView {
             // <div class="flex flex-wrap m-auto">
             //     <Counter />
             // </div>
-        </components::Page>
-        <components::Page heading="HEADING">
-            <p class="text-left m-3">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent maximus felis eget quam fermentum euismod. Proin sagittis quam sodales tortor molestie imperdiet. Praesent ipsum erat, egestas pulvinar dui sed, ornare eleifend nisi. Curabitur sit amet accumsan mauris. Mauris finibus fermentum commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque cursus tortor ac sagittis accumsan. Fusce congue commodo commodo. Nam consectetur varius diam at vestibulum. Nam nec laoreet elit. Pellentesque quis dui quis quam maximus maximus. Duis ornare augue nunc, eget varius mauris pellentesque id. In ut tortor diam.
-            </p>
-            <p class="text-left m-3">
-                Cras ac quam ac elit maximus euismod. Nunc dignissim quam id lobortis rutrum. Etiam non laoreet enim. In maximus turpis non ante gravida, eget varius mauris ornare. Etiam vitae lorem id ligula mollis tempor vel a ex. Fusce mi mauris, vulputate nec nulla nec, ultricies fermentum neque. Pellentesque vulputate sed nunc et ullamcorper. Nullam vitae laoreet est, eget congue enim. Pellentesque velit mauris, tristique a rutrum vel, interdum et purus.
-            </p>
-        </components::Page>
-        <components::Page heading="HEADING #2" hide_next=true>
-            <p>bottom</p>
-        </components::Page>
-    </div>
+            </Slide>
+            <Slide heading="">
+                <p class="text-left m-3">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent maximus felis eget quam fermentum euismod. Proin sagittis quam sodales tortor molestie imperdiet. Praesent ipsum erat, egestas pulvinar dui sed, ornare eleifend nisi. Curabitur sit amet accumsan mauris. Mauris finibus fermentum commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque cursus tortor ac sagittis accumsan. Fusce congue commodo commodo. Nam consectetur varius diam at vestibulum. Nam nec laoreet elit. Pellentesque quis dui quis quam maximus maximus. Duis ornare augue nunc, eget varius mauris pellentesque id. In ut tortor diam.
+                </p>
+                <p class="text-left m-3">
+                    Cras ac quam ac elit maximus euismod. Nunc dignissim quam id lobortis rutrum. Etiam non laoreet enim. In maximus turpis non ante gravida, eget varius mauris ornare. Etiam vitae lorem id ligula mollis tempor vel a ex. Fusce mi mauris, vulputate nec nulla nec, ultricies fermentum neque. Pellentesque vulputate sed nunc et ullamcorper. Nullam vitae laoreet est, eget congue enim. Pellentesque velit mauris, tristique a rutrum vel, interdum et purus.
+                </p>
+            </Slide>
+            <Slide heading="HEADING #2" hide_next=true>
+                <p>bottom</p>
+            </Slide>
+        </div>
     }
 }
