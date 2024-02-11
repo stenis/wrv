@@ -23,7 +23,7 @@ pub fn WCanvas() -> impl IntoView {
         if #[cfg(not(feature = "ssr"))] {
             spawn_local(async move { 
                 let color = color.clone();
-                gfx::wcanvas::run(&canvas_ref, color).await;
+                wrv_gfx::wcanvas::run(&canvas_ref, color).await;
                 logging::log!("wgpu initialized.");
             });
         }

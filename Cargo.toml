@@ -1,5 +1,5 @@
 [workspace]
-members = [ "airspy","app", "frontend", "gfx", "server", "dsp"]
+members = [ "wrv_airspy","wrv_app", "wrv_frontend", "wrv_gfx", "wrv_server", "wrv_dsp"]
 resolver = "2" 
 
 [profile.dev]
@@ -54,13 +54,13 @@ wgpu = { version = "0.19" }
 # that are used together frontend (lib) & server (bin)
 [[workspace.metadata.leptos]]
 # this name is used for the wasm, js and css file names
-name = "serverfunc"
+name = "wrv"
 
 # the package in the workspace that contains the server binary (binary crate)
-bin-package = "server"
+bin-package = "wrv_server"
 
 # the package in the workspace that contains the frontend wasm binary (library crate)
-lib-package = "frontend"
+lib-package = "wrv_frontend"
 
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"

@@ -1,5 +1,5 @@
-use app::error_template::AppError;
-use app::error_template::ErrorTemplate;
+use wrv_app::error_template::AppError;
+use wrv_app::error_template::ErrorTemplate;
 use axum::response::Response as AxumResponse;
 use axum::{
     body::Body,

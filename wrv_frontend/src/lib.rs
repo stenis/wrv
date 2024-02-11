@@ -1,4 +1,4 @@
-use app::*;
+use wrv_app::*;
 use leptos::*;
 use wasm_bindgen::prelude::wasm_bindgen;
 

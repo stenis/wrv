@@ -1,5 +1,5 @@
 [package]
-name = "app"
+name = "wrv_app"
 version = "0.1.0"
 edition = "2021"
 
@@ -21,8 +21,8 @@ cfg-if.workspace = true
 thiserror.workspace = true
 serde = "1.0.193"
 #gloo-timers = { version = "0.3.0", features = ["futures"] }
-airspy = { path = "../airspy", optional = true }
-gfx = { path = "../gfx", optional = true }
+wrv_airspy = { path = "../wrv_airspy", optional = true }
+wrv_gfx = { path = "../wrv_gfx", optional = true }
 web-sys.workspace = true
 wasm-bindgen.workspace = true
 
@@ -32,8 +32,8 @@ hydrate = [
     "leptos/hydrate", 
     "leptos_meta/hydrate", 
     "leptos_router/hydrate",
-    "dep:airspy",
-    "dep:gfx",
+    "dep:wrv_airspy",
+    "dep:wrv_gfx",
     #"dep:console_error_panic_hook",
     #"dep:winit",
     #"dep:wgpu",

@@ -7,7 +7,7 @@ pub fn ConnectUSB(text: &'static str) -> impl IntoView {
         cfg_if::cfg_if! {
             if #[cfg(not(feature = "ssr"))] {
                 spawn_local(async move {
-                    let res = airspy::open_async().await;
+                    let res = wrv_airspy::open_async().await;
                     match res {
                         Ok(spy) => {
                             logging::log!("{:?}", spy.device.product_name());

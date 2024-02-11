@@ -20,8 +20,8 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/serverfunc.css"/>
-        <Title text="USB RADIO" />
+        <Stylesheet id="leptos" href="/pkg/wrv.css"/>
+        <Title text="WRV USB RADIO" />
         <Html lang="en" />
         <main class="bg-slate-400 my-0 mx-auto text-center">
             <Router>     

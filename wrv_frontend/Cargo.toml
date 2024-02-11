@@ -1,10 +1,7 @@
 [package]
-name = "gfx"
+name = "wrv_frontend"
 version = "0.1.0"
 edition = "2021"
-description = "gfx lib"
-repository = ""
-
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -12,13 +9,10 @@ crate-type = ["cdylib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-leptos.workspace = true
-leptos_meta.workspace = true
+wrv_app = { path = "../wrv_app", default-features = false, features = ["hydrate"] }
+leptos = { workspace = true, features = [ "hydrate" ] }
+
 console_error_panic_hook.workspace = true
 console_log.workspace = true
 log.workspace = true
-cfg-if.workspace = true
-winit.workspace = true
-wgpu.workspace = true
-web-sys.workspace = true 
-leptos-use.workspace = true
+wasm-bindgen.workspace = true

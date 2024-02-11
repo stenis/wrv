@@ -67,17 +67,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "airspy"
-version = "0.1.0"
-dependencies = [
- "js-sys",
- "thiserror",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
 name = "alloc-no-stdlib"
 version = "2.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -139,26 +128,6 @@ name = "anyhow"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "080e9890a082662b09c1ad45f567faeeb47f22b5fb23895fbe1e651e718e25ca"
-
-[[package]]
-name = "app"
-version = "0.1.0"
-dependencies = [
- "airspy",
- "cfg-if",
- "gfx",
- "http 1.0.0",
- "leptos",
- "leptos-use",
- "leptos_axum",
- "leptos_meta",
- "leptos_router",
- "log",
- "serde",
- "thiserror",
- "wasm-bindgen",
- "web-sys",
-]
 
 [[package]]
 name = "arrayref"
@@ -964,13 +933,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "669a445ee724c5c69b1b06fe0b63e70a1c84bc9bb7d9696cd4f4e3ec45050408"
 
 [[package]]
-name = "dsp"
-version = "0.1.0"
-dependencies = [
- "rustfft",
-]
-
-[[package]]
 name = "either"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1051,18 +1013,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
-]
-
-[[package]]
-name = "frontend"
-version = "0.1.0"
-dependencies = [
- "app",
- "console_error_panic_hook",
- "console_log",
- "leptos",
- "log",
- "wasm-bindgen",
 ]
 
 [[package]]
@@ -1181,22 +1131,6 @@ dependencies = [
  "libc",
  "wasi",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "gfx"
-version = "0.1.0"
-dependencies = [
- "cfg-if",
- "console_error_panic_hook",
- "console_log",
- "leptos",
- "leptos-use",
- "leptos_meta",
- "log",
- "web-sys",
- "wgpu",
- "winit",
 ]
 
 [[package]]
@@ -3010,21 +2944,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "server"
-version = "0.1.0"
-dependencies = [
- "app",
- "axum",
- "leptos",
- "leptos_axum",
- "log",
- "simple_logger",
- "tokio",
- "tower",
- "tower-http",
-]
-
-[[package]]
 name = "server_fn"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4290,6 +4209,87 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5389a154b01683d28c77f8f68f49dea75f0a4da32557a58f68ee51ebba472d29"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "wrv_airspy"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "wrv_app"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "http 1.0.0",
+ "leptos",
+ "leptos-use",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_router",
+ "log",
+ "serde",
+ "thiserror",
+ "wasm-bindgen",
+ "web-sys",
+ "wrv_airspy",
+ "wrv_gfx",
+]
+
+[[package]]
+name = "wrv_dsp"
+version = "0.1.0"
+dependencies = [
+ "rustfft",
+]
+
+[[package]]
+name = "wrv_frontend"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "console_log",
+ "leptos",
+ "log",
+ "wasm-bindgen",
+ "wrv_app",
+]
+
+[[package]]
+name = "wrv_gfx"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "console_error_panic_hook",
+ "console_log",
+ "leptos",
+ "leptos-use",
+ "leptos_meta",
+ "log",
+ "web-sys",
+ "wgpu",
+ "winit",
+]
+
+[[package]]
+name = "wrv_server"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "leptos",
+ "leptos_axum",
+ "log",
+ "simple_logger",
+ "tokio",
+ "tower",
+ "tower-http",
+ "wrv_app",
 ]
 
 [[package]]
