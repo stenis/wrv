@@ -1,5 +1,12 @@
 [workspace]
-members = [ "wrv_airspy","wrv_app", "wrv_frontend", "wrv_gfx", "wrv_server", "wrv_dsp"]
+members = [ 
+    "wrv_airspy",
+    "wrv_app", 
+    "wrv_dsp",
+    "wrv_frontend", 
+    "wrv_gfx", 
+    "wrv_server",
+]
 resolver = "2" 
 
 [profile.dev]
