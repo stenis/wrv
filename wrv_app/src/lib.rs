@@ -41,7 +41,7 @@ fn HomePage() -> impl IntoView {
             <Slide heading="Modern alternative web application " hide_previous=true>
                 <h2 class="my-2 font-thin text-3xl text-sky-200/90">Presentation / Agenda</h2>
                 <ul>
-                    <li>Rust, Radio, web standards</li>
+                    <li>Rust, Radio, web standards!</li>
                     <li>DX using Leptos, dev loop (compile -> run)</li>
                 </ul>
                 <ConnectUSB text="connect usb" />
