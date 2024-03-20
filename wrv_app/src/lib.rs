@@ -1,5 +1,7 @@
 #![feature(try_blocks)]
 
+use std::sync::{Arc, Mutex};
+
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -35,7 +37,8 @@ fn HomePage() -> impl IntoView {
     //let (value, set_value) = create_signal(0);
     let handle = window_event_listener(ev::keydown, core::utility::keyboard_scroll);
     on_cleanup(move || handle.remove());
-
+    let image = Arc::new(Mutex::new([0 as u8; 1024*256]));
+    
     view! {
         <div class="text-black font-sans flex flex-col min-h-screen">
             <Slide heading="Modern alternative web application " hide_previous=true>
@@ -44,8 +47,8 @@ fn HomePage() -> impl IntoView {
                     <li>Rust, Radio, web standards!</li>
                     <li>DX using Leptos, dev loop (compile -> run)</li>
                 </ul>
-                <ConnectUSB text="connect usb" />
-                <WCanvas />
+                <ConnectUSB image=image.clone() text="connect usb" />
+                <WCanvas image=image.clone() />
             </Slide>
             <Slide heading="">
                 <p class="text-left m-3">

@@ -9,20 +9,21 @@ crate-type = ["cdylib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+wrv_airspy = { path = "../wrv_airspy", optional = true }
+wrv_gfx = { path = "../wrv_gfx", optional = true }
+wrv_dsp = { path = "../wrv_dsp", optional = true }
+
 leptos.workspace = true
 leptos_meta.workspace = true
 leptos_router.workspace = true
 leptos_axum = { workspace = true, optional = true }
 leptos-use = { workspace = true, optional = false }
 
-log.workspace = true
-http.workspace = true
 cfg-if.workspace = true
-thiserror.workspace = true
+http.workspace = true
+log.workspace = true
 serde = "1.0.193"
-#gloo-timers = { version = "0.3.0", features = ["futures"] }
-wrv_airspy = { path = "../wrv_airspy", optional = true }
-wrv_gfx = { path = "../wrv_gfx", optional = true }
+thiserror.workspace = true
 web-sys.workspace = true
 wasm-bindgen.workspace = true
 
@@ -33,6 +34,7 @@ hydrate = [
     "leptos_meta/hydrate", 
     "leptos_router/hydrate",
     "dep:wrv_airspy",
+    "dep:wrv_dsp",
     "dep:wrv_gfx",
     #"dep:console_error_panic_hook",
     #"dep:winit",

@@ -1,4 +1,4 @@
-use js_sys:: Uint32Array;
+use js_sys::{Uint16Array,  Uint32Array};
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{
@@ -63,9 +63,9 @@ impl Airspy {
         Ok(sample_rates)
     }
 
-    pub async fn read_bulk(&self, length: u32) -> Result<Vec<u32>> {
+    pub async fn read_bulk(&self, length: u32) -> Result<Vec<u16>> {
         let result = JsFuture::from(self.device.transfer_in(1, length)).await?.dyn_into::<UsbInTransferResult>()?;
-        let buffer =  Uint32Array::new(&result.data().unwrap().buffer()).to_vec();
+        let buffer =  Uint16Array::new(&result.data().unwrap().buffer()).to_vec();
         Ok(buffer)
     }
 

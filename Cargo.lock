@@ -4253,6 +4253,7 @@ dependencies = [
  "wasm-bindgen",
  "web-sys",
  "wrv_airspy",
+ "wrv_dsp",
  "wrv_gfx",
 ]
 
