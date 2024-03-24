@@ -29,14 +29,3 @@ impl Dsp {
         self.fft.process(convert_to_complex(buffer));
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use crate::iq_converter;
-
-    #[test]
-    fn it_works() {
-        let c = iq_converter::Converter::new();
-        //assert_eq!(c.fir_kernel.len(), c.len);
-    }
-}

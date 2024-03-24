@@ -1,9 +1,7 @@
-
-
 pub struct Converter {
     avg: f32,
     hbc: f32,
-    //len: usize,
+    len: usize,
     fir_index: usize,
     delay_index: usize,
     fir_kernel: Vec<f32>,
@@ -11,20 +9,36 @@ pub struct Converter {
     delay_line: Vec<f32>,
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_delay_interleaved() {
+        let mut c = Converter::new();
+        let mut samples : Vec<f32> = vec![1.0; 50];
+        // delay  half of filter length
+        c.delay_interleaved(&mut samples[1..]);
+        let first_index_of_delayed_q = samples.iter().skip(1).step_by(2).position(|&x| x == 1.0);
+
+        assert_eq!(Some(c.len / 2), first_index_of_delayed_q)
+    }
+}
+
 impl Converter {
     pub fn new() -> Self {
         let len = HB_KERNEL.len();
         let fir_kernel : Vec<f32> = HB_KERNEL.iter().step_by(2).copied().collect();
-        
+        let converter_length = len / 2 + 1;
         Self {
             avg: 0.0,
             hbc: HB_KERNEL[len / 2],
-            //len: len / 2 + 1,
+            len: converter_length,
             fir_index: 0,
             delay_index: 0,
             fir_kernel,
-            fir_queue: vec![0.0; (len / 2 + 1) * SIZE_FACTOR],
-            delay_line: vec![0.0; len / 4],
+            fir_queue: vec![0.0; converter_length * SIZE_FACTOR],
+            delay_line: vec![0.0; converter_length / 2],
         }
     }
 
@@ -85,7 +99,7 @@ impl Converter {
 
         let mut acc;
         let mut fir_index = self.fir_index;
-        let fir_len = self.fir_kernel.len();
+        let fir_len = self.len;
         
         for sample in samples.iter_mut().step_by(2) {
             let queue = &mut self.fir_queue[fir_index..fir_index + 24];
@@ -111,10 +125,8 @@ impl Converter {
             if fir_index == 0 {
                 fir_index = fir_len * (SIZE_FACTOR - 1);
                 let len_minus_one = fir_len - 1;
-                self.fir_queue[fir_index + 1..fir_index + len_minus_one]
-                    .copy_from_slice(&mut self.fir_queue[..len_minus_one]);
+                self.fir_queue.copy_within(..len_minus_one, fir_index + 1);
             }
-
             fir_index -= 1;
         }
 
@@ -122,9 +134,9 @@ impl Converter {
     }
 
     fn delay_interleaved(self: &mut Self, samples: &mut [f32]) {
-        let half_len = self.fir_kernel.len() / 2;
+        let half_len = self.len >> 1;
         let mut index = self.delay_index;
-
+        
         for sample in samples.iter_mut().step_by(2) {
             let res = self.delay_line[index];
             self.delay_line[index] = *sample;
