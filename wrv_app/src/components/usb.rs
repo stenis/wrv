@@ -33,7 +33,7 @@ fn init(_ : MouseEvent) {
                 let r = spy.set_freq(103_000_000).await.unwrap();
                 logging::log!("{:?}", r.status());
                 let mut i = 0;
-                let mut converter = wrv_dsp::Converter::new();
+                let mut converter = Converter::new();
                 let mut buffer_f : [f32; F32_SAMPLES_COUNT] = [0.0; F32_SAMPLES_COUNT];
                 let mut min = f32::MAX;
                 let mut max = f32::MIN;
