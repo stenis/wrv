@@ -2,6 +2,7 @@ use std::sync::Arc;
 use rustfft::{num_complex::Complex, Fft, FftPlanner};
 
 mod iq_converter;
+pub use iq_converter::Converter;
 
 fn convert_to_complex(buffer: &mut [f32]) -> &mut [Complex<f32>] {
     unsafe {

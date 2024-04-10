@@ -4,9 +4,10 @@ use std::sync::{Arc, Mutex};
 use leptos::*;
 use web_sys::MouseEvent;
 
-const U16_SAMPLES_COUNT : u32 = 65_536; // u16
+const BYTE_COUNT : u32 = 65_536; // u8
+const F32_SAMPLES_COUNT : usize = 65_536 / 2;
 const FFT_SIZE : u32 = 1024;
-const FFT_COUNT : u32 = U16_SAMPLES_COUNT / 2 / 2 / FFT_SIZE;
+const FFT_COUNT : u32 = BYTE_COUNT / 2 / 2 / FFT_SIZE;
 const SAMPLE_RESOLUTION : u32 = 12;
 const SAMPLE_ENCAPSULATION : u32 = 16;
 const SAMPLE_SHIFT : u32  = SAMPLE_ENCAPSULATION - SAMPLE_RESOLUTION;
@@ -14,6 +15,8 @@ const SAMPLE_SCALE : f32 = 1.0 / (1 << (15 - SAMPLE_SHIFT)) as f32;
 
 #[cfg(not(feature = "ssr"))]
 fn init(_ : MouseEvent) {
+    use wrv_dsp::Converter;
+
     spawn_local(async move {
         let res = wrv_airspy::open_async().await;
         match res {
@@ -30,21 +33,36 @@ fn init(_ : MouseEvent) {
                 let r = spy.set_freq(103_000_000).await.unwrap();
                 logging::log!("{:?}", r.status());
                 let mut i = 0;
+                let mut converter = wrv_dsp::Converter::new();
+                let mut buffer_f : [f32; F32_SAMPLES_COUNT] = [0.0; F32_SAMPLES_COUNT];
+                let mut min = f32::MAX;
+                let mut max = f32::MIN;
+
                 loop {
                     i+=1;
                     if i > 100 { break; }
                     
-                    let buffer = spy.read_bulk(U16_SAMPLES_COUNT).await.unwrap();
-                    let mut buffer_f = buffer.iter().map(|&v| {
-                        v.wrapping_sub(2048) as f32 * SAMPLE_SCALE }).collect::<Vec<f32>>();
-
+                    let buffer = spy.read_bulk(BYTE_COUNT).await.unwrap();
+                    
+                    //convert to f32
+                    for i in 0..buffer_f.len() {
+                        buffer_f[i] = buffer[i].wrapping_sub(2048) as f32 * SAMPLE_SCALE;
+                    }
+                    
+                    // r -> c
+                    converter.process(&mut buffer_f);
+                    
                     for i in 0..FFT_COUNT {
                         let s = (i * 2 * FFT_SIZE) as usize;
                         let e = s + (2 * FFT_SIZE as usize);
                         dsp.process(&mut buffer_f[s..e]);
+                        for &v in buffer_f[s..e].iter() {
+                            if v > max { max = v; }
+                            if v > min { min = v; }
+                        }
                     }
 
-                    logging::log!("{}", buffer_f[0]);
+                    logging::log!("v: {} min: {min} max: {max}", buffer_f[0]);
                 }
                 logging::log!("reading done.");
             },

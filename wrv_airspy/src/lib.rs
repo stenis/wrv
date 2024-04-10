@@ -1,5 +1,5 @@
 use js_sys::{Uint16Array,  Uint32Array};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{
     UsbControlTransferParameters, 
