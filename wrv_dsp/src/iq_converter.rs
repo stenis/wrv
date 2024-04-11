@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 pub struct Converter {
     avg: f32,
     hbc: f32,

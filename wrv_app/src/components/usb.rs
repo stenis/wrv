@@ -1,6 +1,4 @@
 #![allow(dead_code)]
-use std::sync::{Arc, Mutex};
-
 use leptos::*;
 use web_sys::MouseEvent;
 
@@ -15,7 +13,6 @@ const SAMPLE_SCALE : f32 = 1.0 / (1 << (15 - SAMPLE_SHIFT)) as f32;
 
 #[cfg(not(feature = "ssr"))]
 fn init(_ : MouseEvent) {
-    use wrv_dsp::Converter;
 
     spawn_local(async move {
         let res = wrv_airspy::open_async().await;
@@ -31,16 +28,16 @@ fn init(_ : MouseEvent) {
                 }
                 let _ = spy.start().await.unwrap();
                 let r = spy.set_freq(103_000_000).await.unwrap();
+                
                 logging::log!("{:?}", r.status());
+                
                 let mut i = 0;
-                let mut converter = Converter::new();
-                let mut buffer_f : [f32; F32_SAMPLES_COUNT] = [0.0; F32_SAMPLES_COUNT];
+                let mut buffer_f = [0.0; F32_SAMPLES_COUNT];
                 let mut min = f32::MAX;
                 let mut max = f32::MIN;
 
-                loop {
-                    i+=1;
-                    if i > 100 { break; }
+                while i < 100 {
+                    i += 1;
                     
                     let buffer = spy.read_bulk(BYTE_COUNT).await.unwrap();
                     
@@ -49,20 +46,21 @@ fn init(_ : MouseEvent) {
                         buffer_f[i] = buffer[i].wrapping_sub(2048) as f32 * SAMPLE_SCALE;
                     }
                     
-                    // r -> c
-                    converter.process(&mut buffer_f);
+                    // real -> complex
+                    let buffer_c = dsp.real_to_complex(&mut buffer_f);
                     
                     for i in 0..FFT_COUNT {
-                        let s = (i * 2 * FFT_SIZE) as usize;
-                        let e = s + (2 * FFT_SIZE as usize);
-                        dsp.process(&mut buffer_f[s..e]);
-                        for &v in buffer_f[s..e].iter() {
+                        let s = (i  * FFT_SIZE) as usize;
+                        let e = s + (FFT_SIZE as usize);
+                        dsp.process(&mut buffer_c[s..e]);
+                        for &v in buffer_c[s..e].iter() {
+                            let v = v.norm_sqr();
                             if v > max { max = v; }
-                            if v > min { min = v; }
+                            if v < min { min = v; }
                         }
                     }
 
-                    logging::log!("v: {} min: {min} max: {max}", buffer_f[0]);
+                    logging::log!("v: {} min: {min} max: {max}", buffer_c[0].norm_sqr());
                 }
                 logging::log!("reading done.");
             },
@@ -75,7 +73,7 @@ fn init(_ : MouseEvent) {
 fn init(_ : MouseEvent) {}
 
 #[component]
-pub fn ConnectUSB(image: Arc<Mutex<[u8; 1024*256]>>, text: &'static str) -> impl IntoView {
+pub fn ConnectUSB(text: &'static str) -> impl IntoView {
     view! {
         <button type="button"
                 on:click=init

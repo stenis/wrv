@@ -2,7 +2,7 @@ use std::sync::Arc;
 use rustfft::{num_complex::Complex, Fft, FftPlanner};
 
 mod iq_converter;
-pub use iq_converter::Converter;
+use iq_converter::Converter;
 
 fn convert_to_complex(buffer: &mut [f32]) -> &mut [Complex<f32>] {
     unsafe {
@@ -16,17 +16,24 @@ fn convert_to_complex(buffer: &mut [f32]) -> &mut [Complex<f32>] {
 }
 
 pub struct Dsp {
-    fft: Arc<dyn Fft<f32>>
+    fft: Arc<dyn Fft<f32>>,
+    converter: Converter
 }
 
 impl Dsp {
     pub fn new(length: u32) -> Self {
         let mut planner: FftPlanner<f32> = FftPlanner::new();
         let fft = planner.plan_fft_forward(length as usize);
-        Dsp { fft }
+        let converter = Converter::new();
+        Dsp { fft, converter }
     }
     
-    pub fn process(&self, buffer: &mut [f32]) {
-        self.fft.process(convert_to_complex(buffer));
+    pub fn real_to_complex<'a>(&mut self, buffer: &'a mut [f32]) -> &'a mut [Complex<f32>]{
+        self.converter.process(buffer);
+        convert_to_complex(buffer)
+    }
+
+    pub fn process(&self, buffer: &mut [Complex<f32>]) {
+        self.fft.process(buffer);
     }
 }

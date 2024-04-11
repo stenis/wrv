@@ -5,7 +5,7 @@ use leptos::*;
 use leptos_use::{use_mouse_in_element, UseMouseInElementReturn };
 
 #[component]
-pub fn WCanvas(image: Arc<Mutex<[u8; 1024*256]>>) -> impl IntoView {
+pub fn WCanvas() -> impl IntoView {
     let color = Arc::new(Mutex::new(0.0));
     let effect_color = color.clone();
     let canvas_ref = create_node_ref::<html::Canvas>();
